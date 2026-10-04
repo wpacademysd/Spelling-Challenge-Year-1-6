@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ENGLISH SPELLING CHALLENGE</title>
+  <meta name="description" content="Interactive English Spelling Challenge for primary school students (Year 1 to Year 6).">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* RESET & BASE */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Fredoka', 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(180deg, #fef3c7 0%, #fffbeb 50%, #fef3c7 100%);
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* TYPOGRAPHY & UTILS */
+    h1, h2, h3, h4 {
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    button {
+      font-family: inherit;
+      border: none;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 3D TACTILE BUTTONS */
+    .btn-tactile {
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.18);
+      transform: translateY(0);
+      font-weight: 700;
+    }
+    .btn-tactile:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 rgba(0, 0, 0, 0.18);
+    }
+    .btn-tactile:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    .btn-tactile-sm {
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.14);
+      transform: translateY(0);
+      font-weight: 700;
+    }
+    .btn-tactile-sm:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.14);
+    }
+    .btn-tactile-sm:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.14);
+    }
+
+    /* HEADER */
+    header {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid #fde68a;
+      padding: 10px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .header-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #78350f;
+      letter-spacing: -0.02em;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge-btn {
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid transparent;
+    }
+
+    /* FOOTER */
+    footer {
+      width: 100%;
+      padding: 14px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #92400e;
+      background: #fef3c7;
+      border-top: 1px solid #fde68a;
+      margin-top: auto;
+    }
+
+    /* CARDS */
+    .card {
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 24px 20px;
+      border: 3px solid #fde68a;
+      box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      text-align: center;
+    }
+
+    /* VIEWS */
+    .view-section {
+      display: none;
+      width: 100%;
+      animation: popIn 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    .view-section.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ANIMATIONS */
+    @keyframes popIn {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shake 0.45s ease-in-out;
+    }
+    @keyframes bounceGently {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-bounce-gentle {
+      animation: bounceGently 1.8s infinite ease-in-out;
+    }
+
+    /* AUDIO BUTTON */
+    .btn-audio {
+      background: #fbbf24;
+      color: #78350f;
+      border: 2px solid #f59e0b;
+      padding: 12px 24px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 0 #d97706;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-audio:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #d97706;
+    }
+    .btn-audio.speaking {
+      background: #fef08a;
+      transform: scale(1.05);
+      box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.4);
+    }
+
+    /* PROGRESS BAR */
+    .progress-wrapper {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 14px 18px;
+      border: 2px solid #fde68a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      margin-bottom: 16px;
+    }
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: #f1f5f9;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #fbbf24, #10b981);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    /* EMOJI BOX */
+    .emoji-box {
+      width: 110px;
+      height: 110px;
+      margin: 8px auto 14px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #fef3c7 0%, #ffedd5 100%);
+      border: 4px solid #fcd34d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 58px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    /* EASY MODE OPTIONS */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+      margin: 16px 0;
+    }
+    @media (min-width: 480px) {
+      .options-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .option-btn {
+      background: #ffffff;
+      color: #1e293b;
+      border: 3px solid #fde68a;
+      padding: 14px 16px;
+      border-radius: 20px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .option-btn .badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: #fef3c7;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .option-btn.correct {
+      background: #10b981 !important;
+      color: #ffffff !important;
+      border-color: #059669 !important;
+      transform: scale(1.02);
+    }
+    .option-btn.wrong {
+      background: #f1f5f9 !important;
+      color: #94a3b8 !important;
+      border-color: #cbd5e1 !important;
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    /* MEDIUM TILES */
+    .slots-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 14px 0;
+      min-height: 56px;
+    }
+    .letter-slot {
+      width: 48px;
+      height: 56px;
+      border-radius: 16px;
+      font-size: 26px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .letter-slot.filled {
+      background: #fbbf24;
+      color: #78350f;
+      border: 3px solid #f59e0b;
+      box-shadow: 0 3px 0 #d97706;
+    }
+    .letter-slot.empty {
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      color: transparent;
+    }
+    .bank-tiles {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .bank-tile {
+      width: 52px;
+      height: 56px;
+      border-radius: 16px;
+      background: #38bdf8;
+      color: #ffffff;
+      border: 3px solid #0284c7;
+      box-shadow: 0 4px 0 #0369a1;
+      font-size: 26px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* HARD INPUT */
+    .hard-boxes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .hard-box {
+      width: 44px;
+      height: 52px;
+      border-radius: 14px;
+      background: #f1f5f9;
+      border: 2px dashed #cbd5e1;
+      font-size: 24px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1e293b;
+    }
+    .hard-box.filled {
+      background: #fbbf24;
+      border: 2px solid #f59e0b;
+      color: #78350f;
+    }
+    .hard-box.hinted {
+      background: #fef08a;
+      border: 2px solid #eab308;
+      color: #854d0e;
+    }
+    .virtual-keyboard {
+      background: #e2e8f0;
+      border-radius: 20px;
+      padding: 10px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .kb-row {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
+    .kb-key {
+      min-width: 30px;
+      height: 42px;
+      padding: 0 8px;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 16px;
+      font-weight: 800;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 2px 0 #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kb-key:active {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+
+    /* FEEDBACK BANNER */
+    .feedback-banner {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .feedback-banner.correct {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #10b981;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    }
+    .feedback-banner.wrong {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #f43f5e;
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(244, 63, 94, 0.3);
+    }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: #ffffff;
+      border-radius: 28px;
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      border: 4px solid #fde68a;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fca5a5;
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* CONFETTI CANVAS */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* PILLS & BADGES */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .pill-amber { background: #fef3c7; color: #92400e; }
+    .pill-emerald { background: #d1fae5; color: #065f46; }
+    .pill-blue { background: #dbeafe; color: #1e40af; }
+    .pill-rose { background: #ffe4e6; color: #9f1239; }
+
+    /* STARS */
+    .star-rating {
+      font-size: 42px;
+      letter-spacing: 4px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CONFETTI CANVAS -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <div class="header-brand" id="brandBtn">
+        <span style="font-size: 24px;">✨</span>
+        <span class="header-title" id="headerGameTitle">ENGLISH SPELLING CHALLENGE</span>
+      </div>
+
+      <div class="header-actions">
+        <!-- ACCENT SWITCHER -->
+        <button class="btn-tactile-sm badge-btn" id="accentToggleBtn" style="background:#e0f2fe; color:#0369a1; border-color:#bae6fd;">
+          <span id="accentFlag">🇬🇧 UK</span>
+        </button>
+
+        <!-- SOUND TOGGLE -->
+        <button class="btn-tactile-sm badge-btn" id="soundToggleBtn" style="background:#dcfce7; color:#15803d; border-color:#bbf7d0;">
+          <span id="soundIcon">🔊 Sound ON</span>
+        </button>
+
+        <!-- MENU / HOW TO PLAY -->
+        <button class="btn-tactile-sm badge-btn" id="howToPlayBtn" style="background:#fef3c7; color:#92400e; border-color:#fde68a;">
+          <span>❓ Help</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+
+    <!-- ================= 1. HOME / MAIN MENU ================= -->
+    <div id="homeView" class="view-section active">
+      <div class="card" style="margin-bottom: 14px;">
+        <div class="animate-bounce-gentle" style="font-size: 64px; margin-bottom: 6px;">🏆</div>
+        <h1 id="menuMainTitle" style="font-size: 32px; font-weight: 900; color: #78350f; margin-bottom: 4px;">
+          ENGLISH SPELLING CHALLENGE
+        </h1>
+        <p style="font-size: 15px; font-weight: 800; color: #b45309; margin-bottom: 18px;">
+          Learn • Listen • Spell • Play
+        </p>
+
+        <!-- ACTIVE YEAR & LEVEL PILL -->
+        <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;">
+          <span class="pill pill-blue" id="homeYearBadge">📘 Year 1</span>
+          <span class="pill pill-emerald" id="homeLevelBadge">🟢 EASY</span>
+        </div>
+
+        <!-- 3 MAIN BUTTONS -->
+        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 380px; margin: 0 auto;">
+          <button class="btn-tactile" id="startGameBtn" style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 18px; border-radius: 22px; font-size: 22px;">
+            ▶ START GAME
+          </button>
+
+          <button class="btn-tactile" id="selectLevelBtn" style="background: #fbbf24; color: #78350f; padding: 14px; border-radius: 20px; font-size: 18px; border: 2px solid #f59e0b;">
+            ⚙ SELECT LEVEL & YEAR
+          </button>
+
+          <button class="btn-tactile" id="homeHowToPlayBtn" style="background: #ffffff; color: #334155; padding: 14px; border-radius: 20px; font-size: 16px; border: 2px solid #cbd5e1;">
+            📖 HOW TO PLAY
+          </button>
+        </div>
+      </div>
+
+      <!-- QUICK STATS & PRACTICE BUTTONS -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 380px;">
+        <button class="btn-tactile-sm" id="homeProgressBtn" style="background: #f3e8ff; color: #6b21a8; padding: 12px; border-radius: 16px; border: 2px solid #e9d5ff; font-size: 13px;">
+          📊 My Progress
+        </button>
+        <button class="btn-tactile-sm" id="homePracticeBtn" style="background: #e0f2fe; color: #0369a1; padding: 12px; border-radius: 16px; border: 2px solid #bae6fd; font-size: 13px;">
+          📚 Practice Words
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= 2. SELECT LEVEL & YEAR VIEW ================= -->
+    <div id="levelSelectView" class="view-section">
+      <div class="card">
+        <h2 style="font-size: 26px; color: #78350f; margin-bottom: 4px;">SELECT LEVEL & YEAR</h2>
+        <p style="font-size: 13px; font-weight: 700; color: #b45309; margin-bottom: 18px;">
+          Customize according to your primary school grade
+        </p>
+
+        <!-- 1. CHOOSE YEAR -->
+        <span style="font-size: 12px; font-weight: 900; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; display: block; margin-bottom: 8px;">
+          1. CHOOSE YEAR (TAHUN 1–6)
+        </span>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px;">
+          <button class="btn-tactile-sm year-select-btn" data-year="1" style="padding: 10px 4px; border-radius: 14px; background:#dbeafe; color:#1e40af; border:2px solid #93c5fd;">Year 1</button>
+          <button class="btn-tactile-sm year-select-btn" data-year="2" style="padding: 10px 4px; border-radius: 14px; background:#f1f5f9; color:#334155; border:2px solid #e2e8f0;">Year 2</button>
+          <button class="btn-tactile-sm year-select-btn" data-year="3" style="padding: 10px 4px; border-radius: 14px; background:#f1f5f9; color:#334155; border:2px solid #e2e8f0;">Year 3</button>
+          <button class="btn-tactile-sm year-select-btn" data-year="4" style="padding: 10px 4px; border-radius: 14px; background:#f1f5f9; color:#334155; border:2px solid #e2e8f0;">Year 4</button>
+          <button class="btn-tactile-sm year-select-btn" data-year="5" style="padding: 10px 4px; border-radius: 14px; background:#f1f5f9; color:#334155; border:2px solid #e2e8f0;">Year 5</button>
+          <button class="btn-tactile-sm year-select-btn" data-year="6" style="padding: 10px 4px; border-radius: 14px; background:#f1f5f9; color:#334155; border:2px solid #e2e8f0;">Year 6</button>
+        </div>
+
+        <!-- 2. CHOOSE DIFFICULTY -->
+        <span style="font-size: 12px; font-weight: 900; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; display: block; margin-bottom: 8px;">
+          2. CHOOSE DIFFICULTY
+        </span>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
+          <button class="btn-tactile-sm diff-select-btn" data-diff="EASY" style="padding: 12px 16px; border-radius: 16px; background:#dcfce7; color:#15803d; border:2px solid #86efac; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 16px; font-weight: 900;">🟢 EASY</div>
+              <div style="font-size: 11px; opacity: 0.9;">Picture + Audio + 4 Choices</div>
+            </div>
+            <span style="font-size: 20px;">✓</span>
+          </button>
+
+          <button class="btn-tactile-sm diff-select-btn" data-diff="MEDIUM" style="padding: 12px 16px; border-radius: 16px; background:#f1f5f9; color:#334155; border:2px solid #e2e8f0; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 16px; font-weight: 900;">🟡 MEDIUM</div>
+              <div style="font-size: 11px; opacity: 0.8;">Picture + Audio + Scrambled Letters</div>
+            </div>
+            <span style="font-size: 20px; display: none;">✓</span>
+          </button>
+
+          <button class="btn-tactile-sm diff-select-btn" data-diff="HARD" style="padding: 12px 16px; border-radius: 16px; background:#f1f5f9; color:#334155; border:2px solid #e2e8f0; text-align: left; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div style="font-size: 16px; font-weight: 900;">🔴 HARD</div>
+              <div style="font-size: 11px; opacity: 0.8;">Audio & Hint ONLY! Type the spelling</div>
+            </div>
+            <span style="font-size: 20px; display: none;">✓</span>
+          </button>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-tactile-sm" id="levelBackBtn" style="flex: 1; background: #f1f5f9; color: #475569; padding: 14px; border-radius: 18px;">
+            Back
+          </button>
+          <button class="btn-tactile" id="levelStartBtn" style="flex: 2; background: #fbbf24; color: #78350f; padding: 14px; border-radius: 18px; font-size: 18px; border: 2px solid #f59e0b;">
+            Start Game ➔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 3. ACTIVE GAME VIEW ================= -->
+    <div id="gameView" class="view-section">
+      <!-- PROGRESS BAR -->
+      <div class="progress-wrapper">
+        <div class="progress-top">
+          <div>
+            Question <span id="qCurrentNum" style="color: #d97706; font-size: 16px;">1</span> / 10
+            <span class="pill pill-blue" id="gameYearPill" style="margin-left: 6px;">Year 1</span>
+            <span class="pill pill-emerald" id="gameLevelPill">EASY</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div id="gameLivesDisplay" style="letter-spacing: 2px; font-size: 16px;">
+              ❤️ ❤️ ❤️
+            </div>
+            <div class="pill pill-amber" style="font-size: 13px;">
+              Score: <span id="gameScoreDisplay" style="color:#b45309; font-size: 15px; margin-left: 2px;">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-track">
+          <div class="progress-fill" id="gameProgressFill" style="width: 10%;"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 11px; font-weight: 700; color: #64748b;">
+          <span id="streakIndicator">🔥 Streak: 0</span>
+          <span id="gameCategoryDisplay">Category: Animals</span>
+        </div>
+      </div>
+
+      <!-- MAIN QUESTION CARD -->
+      <div class="card" id="questionCard">
+        <!-- CARD HEADER: CATEGORY & HINT BUTTON -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span class="pill pill-amber" id="cardCategoryPill">🐾 Animals</span>
+          <button class="btn-tactile-sm" id="hintBtn" style="background:#fef08a; color:#854d0e; padding: 4px 10px; border-radius: 12px; font-size: 12px; border: 1px solid #facc15;">
+            💡 HINT
+          </button>
+        </div>
+
+        <!-- VISUAL EMOJI / MYSTERY -->
+        <div class="emoji-box" id="questionEmoji">🐱</div>
+
+        <!-- HINT DISPLAY (IF UNLOCKED) -->
+        <div id="hintBox" style="display: none; background: #fffbeb; border: 2px dashed #fde68a; border-radius: 14px; padding: 8px 12px; font-size: 12px; font-weight: 700; color: #78350f; margin-bottom: 12px;">
+          💡 Hint: <span id="hintText"></span>
+        </div>
+
+        <!-- PRONUNCIATION AUDIO BUTTON -->
+        <div style="margin-bottom: 14px;">
+          <button class="btn-audio" id="listenAudioBtn">
+            <span id="audioSpeakerIcon">🔊</span>
+            <span>LISTEN</span>
+          </button>
+        </div>
+
+        <!-- FEEDBACK NOTIFICATION BANNER -->
+        <div class="feedback-banner" id="feedbackBanner">
+          <span id="feedbackText">Correct! 🎉</span>
+        </div>
+
+        <!-- DYNAMIC DIFFICULTY SECTIONS -->
+
+        <!-- EASY LEVEL: 4 CHOICES -->
+        <div id="easyContainer" class="options-grid">
+          <button class="btn-tactile option-btn" data-index="0">
+            <span class="badge">A</span>
+            <span class="option-text">CAT</span>
+            <span></span>
+          </button>
+          <button class="btn-tactile option-btn" data-index="1">
+            <span class="badge">B</span>
+            <span class="option-text">KAT</span>
+            <span></span>
+          </button>
+          <button class="btn-tactile option-btn" data-index="2">
+            <span class="badge">C</span>
+            <span class="option-text">COT</span>
+            <span></span>
+          </button>
+          <button class="btn-tactile option-btn" data-index="3">
+            <span class="badge">D</span>
+            <span class="option-text">CET</span>
+            <span></span>
+          </button>
+        </div>
+
+        <!-- MEDIUM LEVEL: SCRAMBLED LETTERS -->
+        <div id="mediumContainer" style="display: none; width: 100%;">
+          <span style="font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase;">
+            Tap letters in correct order:
+          </span>
+
+          <!-- ANSWER SLOTS -->
+          <div class="slots-container" id="mediumSlots"></div>
+
+          <!-- HELPER CONTROLS -->
+          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px;">
+            <button class="btn-tactile-sm" id="mediumUndoBtn" style="background:#f1f5f9; color:#475569; padding: 6px 12px; border-radius: 12px; font-size: 12px;">
+              ⌫ Undo
+            </button>
+            <button class="btn-tactile-sm" id="mediumClearBtn" style="background:#fee2e2; color:#b91c1c; padding: 6px 12px; border-radius: 12px; font-size: 12px;">
+              Clear
+            </button>
+          </div>
+
+          <!-- SCRAMBLED BANK -->
+          <div class="bank-tiles" id="mediumBank"></div>
+        </div>
+
+        <!-- HARD LEVEL: AUDIO & TYPE -->
+        <div id="hardContainer" style="display: none; width: 100%;">
+          <span style="font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase;">
+            Type your spelling:
+          </span>
+
+          <div class="hard-boxes" id="hardBoxes"></div>
+
+          <!-- VIRTUAL KEYBOARD -->
+          <div class="virtual-keyboard">
+            <div class="kb-row">
+              <button class="kb-key" data-key="Q">Q</button>
+              <button class="kb-key" data-key="W">W</button>
+              <button class="kb-key" data-key="E">E</button>
+              <button class="kb-key" data-key="R">R</button>
+              <button class="kb-key" data-key="T">T</button>
+              <button class="kb-key" data-key="Y">Y</button>
+              <button class="kb-key" data-key="U">U</button>
+              <button class="kb-key" data-key="I">I</button>
+              <button class="kb-key" data-key="O">O</button>
+              <button class="kb-key" data-key="P">P</button>
+            </div>
+            <div class="kb-row">
+              <button class="kb-key" data-key="A">A</button>
+              <button class="kb-key" data-key="S">S</button>
+              <button class="kb-key" data-key="D">D</button>
+              <button class="kb-key" data-key="F">F</button>
+              <button class="kb-key" data-key="G">G</button>
+              <button class="kb-key" data-key="H">H</button>
+              <button class="kb-key" data-key="J">J</button>
+              <button class="kb-key" data-key="K">K</button>
+              <button class="kb-key" data-key="L">L</button>
+            </div>
+            <div class="kb-row">
+              <button class="kb-key" data-key="Z">Z</button>
+              <button class="kb-key" data-key="X">X</button>
+              <button class="kb-key" data-key="C">C</button>
+              <button class="kb-key" data-key="V">V</button>
+              <button class="kb-key" data-key="B">B</button>
+              <button class="kb-key" data-key="N">N</button>
+              <button class="kb-key" data-key="M">M</button>
+            </div>
+            <div class="kb-row" style="margin-top: 6px;">
+              <button class="kb-key" id="kbClearBtn" style="background:#fee2e2; color:#b91c1c; font-size:12px; padding: 0 14px;">Clear</button>
+              <button class="kb-key btn-tactile" id="kbCheckBtn" style="background:#fbbf24; color:#78350f; font-weight:900; flex:1; max-width: 140px;">CHECK ✓</button>
+              <button class="kb-key" id="kbBackBtn" style="background:#f1f5f9; color:#475569; font-size:12px; padding: 0 14px;">Del</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEXT QUESTION BUTTON (SHOWN WHEN ANSWERED CORRECTLY) -->
+        <button class="btn-tactile" id="nextQuestionBtn" style="display: none; width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 14px; border-radius: 18px; font-size: 18px; margin-top: 14px;">
+          NEXT QUESTION ➔
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= 4. RESULT SCREEN ================= -->
+    <div id="resultView" class="view-section">
+      <div class="card" style="margin-bottom: 14px;">
+        <div style="font-size: 56px; margin-bottom: 4px;">🎉</div>
+        <h2 style="font-size: 32px; color: #78350f; margin-bottom: 2px;">GREAT JOB!</h2>
+        <p id="resultSubtext" style="font-size: 14px; font-weight: 700; color: #b45309; margin-bottom: 12px;">
+          You completed all 10 spelling challenges!
+        </p>
+
+        <!-- STAR RATING -->
+        <div class="star-rating" id="resultStars">⭐⭐⭐</div>
+
+        <!-- SCORE BOX -->
+        <div style="background: #fffbeb; border: 2px solid #fde68a; border-radius: 20px; padding: 14px; margin: 14px auto; max-width: 320px;">
+          <span style="font-size: 11px; font-weight: 900; color: #b45309; text-transform: uppercase;">Final Score</span>
+          <div style="font-size: 38px; font-weight: 900; color: #78350f;">
+            <span id="resultScore">90</span> <span style="font-size: 20px; color: #d97706;">/ 100</span>
+          </div>
+          <div style="display: flex; justify-content: space-around; font-size: 12px; font-weight: 800; color: #64748b; margin-top: 6px; padding-top: 6px; border-top: 1px solid #fde68a;">
+            <span>Correct: <strong id="resultCorrectCount" style="color:#059669;">9</strong>/10</span>
+            <span>Best Streak: <strong id="resultStreak" style="color:#ea580c;">🔥 5</strong></span>
+          </div>
+        </div>
+
+        <!-- SESSION WORDS REVIEW -->
+        <div style="width: 100%; text-align: left; margin: 16px 0;">
+          <h4 style="font-size: 12px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">
+            Words in this session:
+          </h4>
+          <div id="resultWordsList" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;"></div>
+        </div>
+
+        <!-- 3 ACTION BUTTONS -->
+        <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 340px; margin: 0 auto;">
+          <button class="btn-tactile" id="playAgainBtn" style="background: #10b981; color: white; padding: 14px; border-radius: 18px; font-size: 18px;">
+            🔄 PLAY AGAIN
+          </button>
+
+          <button class="btn-tactile" id="changeLevelBtn" style="background: #fbbf24; color: #78350f; padding: 12px; border-radius: 18px; font-size: 16px; border: 2px solid #f59e0b;">
+            ⚙ CHANGE LEVEL
+          </button>
+
+          <button class="btn-tactile-sm" id="resultHomeBtn" style="background: #f1f5f9; color: #334155; padding: 12px; border-radius: 18px; font-size: 15px;">
+            🏠 HOME
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 5. PRACTICE MODE VIEW ================= -->
+    <div id="practiceView" class="view-section">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <button class="btn-tactile-sm" id="practiceBackBtn" style="background:#f1f5f9; color:#475569; padding: 6px 14px; border-radius: 12px; font-size: 12px;">
+            ← Menu
+          </button>
+          <span class="pill pill-emerald">PRACTICE (NO SCORES)</span>
+        </div>
+
+        <!-- FLASHCARD -->
+        <div class="emoji-box" id="practiceEmoji">🍎</div>
+        <h2 id="practiceWord" style="font-size: 34px; letter-spacing: 0.1em; color: #78350f; text-transform: uppercase; margin-bottom: 4px;">APPLE</h2>
+        <span class="pill pill-blue" id="practiceYearPill" style="margin-bottom: 12px;">Year 1 Vocabulary</span>
+
+        <p id="practiceHint" style="font-size: 14px; font-weight: 700; color: #475569; margin: 10px 0 16px; font-style: italic;">
+          "A sweet round red or green fruit."
+        </p>
+
+        <div style="margin-bottom: 20px;">
+          <button class="btn-audio" id="practiceAudioBtn">
+            <span>🔊 LISTEN</span>
+          </button>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-tactile-sm" id="practicePrevBtn" style="flex:1; background:#f1f5f9; color:#334155; padding: 12px; border-radius: 16px;">
+            ← Previous
+          </button>
+          <button class="btn-tactile" id="practiceNextBtn" style="flex:1; background:#fbbf24; color:#78350f; padding: 12px; border-radius: 16px; border:2px solid #f59e0b;">
+            Next Word →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 6. MY PROGRESS VIEW ================= -->
+    <div id="progressView" class="view-section">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <button class="btn-tactile-sm" id="progressBackBtn" style="background:#f1f5f9; color:#475569; padding: 6px 14px; border-radius: 12px; font-size: 12px;">
+            ← Menu
+          </button>
+          <h2 style="font-size: 20px; color: #78350f;">MY PROGRESS</h2>
+          <span style="width: 50px;"></span>
+        </div>
+
+        <!-- STATS GRID -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+          <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 12px;">
+            <div style="font-size: 22px;">🎮</div>
+            <div style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase;">Games Played</div>
+            <div id="statGamesPlayed" style="font-size: 24px; font-weight: 900; color: #1e293b;">0</div>
+          </div>
+
+          <div style="background: #ecfdf5; border: 2px solid #a7f3d0; border-radius: 16px; padding: 12px;">
+            <div style="font-size: 22px;">✅</div>
+            <div style="font-size: 11px; font-weight: 800; color: #047857; text-transform: uppercase;">Words Correct</div>
+            <div id="statWordsCorrect" style="font-size: 24px; font-weight: 900; color: #065f46;">0</div>
+          </div>
+
+          <div style="background: #fffbeb; border: 2px solid #fde68a; border-radius: 16px; padding: 12px;">
+            <div style="font-size: 22px;">🏆</div>
+            <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase;">Best Score</div>
+            <div id="statBestScore" style="font-size: 24px; font-weight: 900; color: #78350f;">0</div>
+          </div>
+
+          <div style="background: #fff7ed; border: 2px solid #fed7aa; border-radius: 16px; padding: 12px;">
+            <div style="font-size: 22px;">🔥</div>
+            <div style="font-size: 11px; font-weight: 800; color: #c2410c; text-transform: uppercase;">Best Streak</div>
+            <div id="statBestStreak" style="font-size: 24px; font-weight: 900; color: #9a3412;">0</div>
+          </div>
+        </div>
+
+        <!-- WORDS TO PRACTICE -->
+        <div style="text-align: left;">
+          <h4 style="font-size: 12px; font-weight: 900; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">
+            Words to Practice:
+          </h4>
+          <div id="practiceItemsList" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HOW TO PLAY MODAL -->
+  <div class="modal-overlay" id="howToPlayModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeHowToPlayBtn">✕</button>
+      <div style="font-size: 40px; margin-bottom: 6px;">📖</div>
+      <h3 style="font-size: 22px; color: #78350f; margin-bottom: 12px;">HOW TO PLAY</h3>
+      <div style="text-align: left; font-size: 13px; font-weight: 700; color: #334155; line-height: 1.6; display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px;">
+        <p>1. 🔊 <strong>Listen</strong> to the English word pronunciation.</p>
+        <p>2. 🖼️ <strong>Look</strong> at the picture clue (in Easy & Medium).</p>
+        <p>3. ✍️ <strong>Spell or choose</strong> the correct spelling.</p>
+        <p>4. ⭐ <strong>Earn +10 points</strong> for every correct answer.</p>
+        <p>5. 🎯 <strong>Complete all 10 questions</strong> to see your star rating!</p>
+      </div>
+
+      <div style="background: #f8fafc; border-radius: 16px; padding: 12px; text-align: left; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 18px;">
+        <p style="margin-bottom: 4px;">🟢 <strong>EASY:</strong> Pick from 4 choices.</p>
+        <p style="margin-bottom: 4px;">🟡 <strong>MEDIUM:</strong> Assemble scrambled letters.</p>
+        <p>🔴 <strong>HARD:</strong> Audio only! Type the spelling yourself.</p>
+      </div>
+
+      <button class="btn-tactile" id="howToPlayGotItBtn" style="width: 100%; background: #fbbf24; color: #78350f; padding: 12px; border-radius: 16px; font-size: 16px; border: 2px solid #f59e0b;">
+        LET'S PLAY! 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- OUT OF LIVES MODAL -->
+  <div class="modal-overlay" id="outOfLivesModal">
+    <div class="modal-content">
+      <div style="font-size: 46px; margin-bottom: 6px;">💔</div>
+      <h3 style="font-size: 24px; color: #9f1239; margin-bottom: 6px;">OUT OF LIVES!</h3>
+      <p style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 18px;">
+        You used all 3 hearts! Don't worry, keep practicing!
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn-tactile" id="outTryAgainBtn" style="background: #10b981; color: white; padding: 12px; border-radius: 16px; font-size: 16px;">
+          🔄 TRY AGAIN
+        </button>
+        <button class="btn-tactile" id="outContinueBtn" style="background: #fbbf24; color: #78350f; padding: 12px; border-radius: 16px; font-size: 15px; border: 2px solid #f59e0b;">
+          ▶ CONTINUE WITHOUT LIVES
+        </button>
+        <button class="btn-tactile-sm" id="outHomeBtn" style="background: #f1f5f9; color: #334155; padding: 12px; border-radius: 16px; font-size: 14px;">
+          🏠 HOME
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span id="footerBrandText">Powered by WPACADEMY SYAZWANDANIIAL</span>
+  </footer>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    /* =========================================================================
+     * RESELL FRIENDLY CONFIGURATION
+     * You can customize the title, brand name, and footer here.
+     * ========================================================================= */
+    const GAME_CONFIG = {
+      gameTitle: "ENGLISH SPELLING CHALLENGE",
+      brandName: "WPACADEMY",
+      footerText: "Powered by WPACADEMY SYAZWANDANIIAL"
+    };
+
+    // Apply configuration immediately to DOM
+    document.title = GAME_CONFIG.gameTitle;
+    document.getElementById("headerGameTitle").textContent = GAME_CONFIG.gameTitle;
+    document.getElementById("menuMainTitle").textContent = GAME_CONFIG.gameTitle;
+    document.getElementById("footerBrandText").textContent = GAME_CONFIG.footerText;
+
+    /* =========================================================================
+     * COMPREHENSIVE WORD BANK (Year 1 to Year 6)
+     * All words directly embedded - zero external dependencies!
+     * ========================================================================= */
+    const WORD_BANK = [
+      // YEAR 1 (Short & very basic)
+      { word: "cat", year: 1, category: "Animals", hint: "A furry pet that purrs and meows.", emoji: "🐱", distractors: ["kat", "cet", "cot"] },
+      { word: "dog", year: 1, category: "Animals", hint: "Man's best friend that barks.", emoji: "🐶", distractors: ["dogg", "dag", "dok"] },
+      { word: "sun", year: 1, category: "Nature", hint: "The bright star that warms the daytime.", emoji: "☀️", distractors: ["son", "sunn", "zan"] },
+      { word: "hat", year: 1, category: "Clothes", hint: "Worn on your head for sun protection.", emoji: "👒", distractors: ["hatt", "het", "hed"] },
+      { word: "pen", year: 1, category: "School", hint: "Used with blue or black ink to write.", emoji: "🖊️", distractors: ["pan", "penn", "pin"] },
+      { word: "cup", year: 1, category: "Daily Objects", hint: "A container used to drink hot tea or water.", emoji: "☕", distractors: ["cupp", "cap", "kup"] },
+      { word: "bag", year: 1, category: "School", hint: "Carried on shoulders to hold books.", emoji: "🎒", distractors: ["beg", "bagg", "baeg"] },
+      { word: "car", year: 1, category: "Vehicles", hint: "A four-wheeled road motor vehicle.", emoji: "🚗", distractors: ["kar", "carr", "kor"] },
+      { word: "bus", year: 1, category: "Vehicles", hint: "A big yellow vehicle that carries students.", emoji: "🚌", distractors: ["buss", "bas", "buz"] },
+      { word: "fish", year: 1, category: "Animals", hint: "Swims in water using gills and fins.", emoji: "🐟", distractors: ["fesh", "fissh", "vis"] },
+      { word: "bed", year: 1, category: "Things at Home", hint: "Where you sleep comfortably at night.", emoji: "🛏️", distractors: ["bad", "bedd", "bade"] },
+      { word: "egg", year: 1, category: "Food", hint: "Laid by hens with a yellow yolk inside.", emoji: "🥚", distractors: ["eg", "egge", "agg"] },
+      { word: "red", year: 1, category: "General", hint: "The bright color of ripe strawberries.", emoji: "🔴", distractors: ["rad", "redd", "ret"] },
+      { word: "pig", year: 1, category: "Animals", hint: "A pink farm animal with a curly tail.", emoji: "🐷", distractors: ["peg", "pigg", "pyg"] },
+      { word: "ant", year: 1, category: "Animals", hint: "A tiny hardworking insect that lives in colonies.", emoji: "🐜", distractors: ["ent", "annt", "aint"] },
+
+      // YEAR 2 (Easy, slightly longer)
+      { word: "apple", year: 2, category: "Fruits", hint: "A round sweet fruit, red or green.", emoji: "🍎", distractors: ["aple", "appel", "appol"] },
+      { word: "rabbit", year: 2, category: "Animals", hint: "A furry animal with long ears that hops.", emoji: "🐰", distractors: ["rabit", "rebit", "rabbet"] },
+      { word: "pencil", year: 2, category: "School", hint: "A wooden tool with graphite for writing.", emoji: "✏️", distractors: ["pencel", "pensil", "pencle"] },
+      { word: "table", year: 2, category: "Things at Home", hint: "Flat top furniture for eating meals.", emoji: "🪵", distractors: ["tabel", "teble", "tabul"] },
+      { word: "chair", year: 2, category: "Things at Home", hint: "A seat with four legs and a backrest.", emoji: "🪑", distractors: ["chare", "cheir", "cheer"] },
+      { word: "water", year: 2, category: "Nature", hint: "Clear liquid essential for all life.", emoji: "💧", distractors: ["watar", "watter", "watur"] },
+      { word: "green", year: 2, category: "General", hint: "The fresh color of grass and tree leaves.", emoji: "🟢", distractors: ["grene", "grean", "grien"] },
+      { word: "school", year: 2, category: "School", hint: "A place where kids learn with teachers.", emoji: "🏫", distractors: ["skool", "scool", "schol"] },
+      { word: "house", year: 2, category: "Things at Home", hint: "A building where a family lives.", emoji: "🏠", distractors: ["howse", "haus", "hous"] },
+      { word: "bread", year: 2, category: "Food", hint: "Baked wheat food used to make sandwiches.", emoji: "🍞", distractors: ["bred", "braid", "breed"] },
+      { word: "train", year: 2, category: "Vehicles", hint: "Connected railway cars traveling on tracks.", emoji: "🚆", distractors: ["trane", "trayn", "tran"] },
+      { word: "clock", year: 2, category: "Things at Home", hint: "Shows the time in hours and minutes.", emoji: "⏰", distractors: ["clok", "cloc", "klook"] },
+      { word: "shoes", year: 2, category: "Clothes", hint: "Footwear worn to protect feet while walking.", emoji: "👟", distractors: ["shoos", "shues", "soes"] },
+      { word: "tiger", year: 2, category: "Animals", hint: "A fierce wild cat with black stripes.", emoji: "🐯", distractors: ["tyger", "tigar", "tigor"] },
+
+      // YEAR 3 (Intermediate)
+      { word: "banana", year: 3, category: "Fruits", hint: "A long curved yellow fruit monkeys love.", emoji: "🍌", distractors: ["bananna", "benana", "banan"] },
+      { word: "window", year: 3, category: "Things at Home", hint: "A glass opening on a wall to let in light.", emoji: "🪟", distractors: ["windo", "windoe", "wyndow"] },
+      { word: "teacher", year: 3, category: "School", hint: "A person who educates students in class.", emoji: "👩‍🏫", distractors: ["teecher", "teachur", "techer"] },
+      { word: "garden", year: 3, category: "Nature", hint: "A plot of land where flowers and plants grow.", emoji: "🪴", distractors: ["gardin", "gardan", "gardun"] },
+      { word: "orange", year: 3, category: "Fruits", hint: "A round citrus fruit bursting with juice.", emoji: "🍊", distractors: ["ornge", "orang", "orenge"] },
+      { word: "family", year: 3, category: "General", hint: "Parents and children living together.", emoji: "👨‍👩‍👧‍👦", distractors: ["fammily", "famely", "famly"] },
+      { word: "market", year: 3, category: "General", hint: "A public bazaar where food and goods are sold.", emoji: "🏪", distractors: ["marcet", "markit", "markat"] },
+      { word: "animal", year: 3, category: "Animals", hint: "A living creature that moves and feeds.", emoji: "🐾", distractors: ["animel", "anamal", "animol"] },
+      { word: "kitchen", year: 3, category: "Things at Home", hint: "A room used for cooking delicious food.", emoji: "🍳", distractors: ["kichen", "kitcken", "kitchin"] },
+      { word: "picture", year: 3, category: "School", hint: "A painting, photograph, or drawing.", emoji: "🖼️", distractors: ["pikture", "picter", "pictur"] },
+      { word: "monkey", year: 3, category: "Animals", hint: "An agile animal that swings from tree branches.", emoji: "🐒", distractors: ["monky", "monki", "mankey"] },
+      { word: "pizza", year: 3, category: "Food", hint: "Baked dough topped with tomato sauce and cheese.", emoji: "🍕", distractors: ["piza", "pitsa", "peezza"] },
+      { word: "bottle", year: 3, category: "Daily Objects", hint: "A container with a narrow neck for water.", emoji: "🍶", distractors: ["botle", "bottel", "battel"] },
+
+      // YEAR 4 (More challenging)
+      { word: "bicycle", year: 4, category: "Vehicles", hint: "A two-wheeled vehicle you ride by pedaling.", emoji: "🚲", distractors: ["bycicle", "bicyle", "bisycle"] },
+      { word: "library", year: 4, category: "School", hint: "A quiet building holding thousands of books.", emoji: "📚", distractors: ["libary", "librery", "lybrary"] },
+      { word: "hospital", year: 4, category: "General", hint: "A healthcare center where sick people are healed.", emoji: "🏥", distractors: ["hospitle", "hospitel", "hosspital"] },
+      { word: "computer", year: 4, category: "School", hint: "An electronic machine for games, coding, and study.", emoji: "💻", distractors: ["computor", "computar", "compuer"] },
+      { word: "vegetable", year: 4, category: "Food", hint: "Healthy plant foods like carrots and broccoli.", emoji: "🥕", distractors: ["vegtable", "vegetibal", "vegitible"] },
+      { word: "beautiful", year: 4, category: "General", hint: "Very pleasing to look at; attractive.", emoji: "✨", distractors: ["beautifull", "beatiful", "beauteful"] },
+      { word: "holiday", year: 4, category: "General", hint: "A vacation time away from school or work.", emoji: "🏖️", distractors: ["holeday", "hollyday", "holaday"] },
+      { word: "mountain", year: 4, category: "Nature", hint: "A very tall steep landform with a snowy peak.", emoji: "⛰️", distractors: ["mountian", "mounten", "mountan"] },
+      { word: "chocolate", year: 4, category: "Food", hint: "A sweet brown treat made from cocoa beans.", emoji: "🍫", distractors: ["choclate", "chocolat", "chocolete"] },
+      { word: "breakfast", year: 4, category: "Food", hint: "The first morning meal of the day.", emoji: "🥞", distractors: ["brekfast", "breakfust", "braekfast"] },
+      { word: "elephant", year: 4, category: "Animals", hint: "A huge mammal with big ears and a long trunk.", emoji: "🐘", distractors: ["elefant", "elephent", "elephand"] },
+      { word: "rainbow", year: 4, category: "Nature", hint: "A colorful arc of light in sky after rain.", emoji: "🌈", distractors: ["rainboe", "raynbow", "rainbaw"] },
+
+      // YEAR 5 (Complex spellings)
+      { word: "different", year: 5, category: "General", hint: "Not the same as another; unique.", emoji: "🔄", distractors: ["diferent", "diffrent", "differant"] },
+      { word: "important", year: 5, category: "General", hint: "Of great significance, value, or meaning.", emoji: "⭐", distractors: ["importent", "importint", "impartant"] },
+      { word: "activity", year: 5, category: "School", hint: "Things that people do for exercise or fun.", emoji: "🏃", distractors: ["activaty", "activety", "aktivety"] },
+      { word: "environment", year: 5, category: "Nature", hint: "The natural world of land, air, and trees.", emoji: "🌱", distractors: ["enviroment", "enviornment", "environmant"] },
+      { word: "dangerous", year: 5, category: "General", hint: "Likely to cause harm or injury.", emoji: "⚠️", distractors: ["dangerus", "dangeros", "dangrous"] },
+      { word: "interesting", year: 5, category: "General", hint: "Holding your curiosity and attention.", emoji: "🧐", distractors: ["intresting", "interisting", "interesteng"] },
+      { word: "exercise", year: 5, category: "General", hint: "Physical workout activity to stay fit and healthy.", emoji: "🏋️", distractors: ["exercize", "exersise", "exersize"] },
+      { word: "calendar", year: 5, category: "Daily Objects", hint: "Shows dates, days of the week, and months.", emoji: "📅", distractors: ["calender", "calandar", "calindur"] },
+      { word: "restaurant", year: 5, category: "Food", hint: "A dining place where meals are ordered and served.", emoji: "🍽️", distractors: ["restarant", "resturant", "restaraunt"] },
+      { word: "adventure", year: 5, category: "General", hint: "An exciting and daring journey into the unknown.", emoji: "🧭", distractors: ["adventur", "advencher", "adventoor"] },
+      { word: "crocodile", year: 5, category: "Animals", hint: "A large predatory river reptile with sharp teeth.", emoji: "🐊", distractors: ["crocadile", "crocodyle", "crokodile"] },
+      { word: "kangaroo", year: 5, category: "Animals", hint: "An Australian animal that hops with a pouch.", emoji: "🦘", distractors: ["kangeroo", "kangarou", "kangoroo"] },
+
+      // YEAR 6 (Advanced Primary)
+      { word: "knowledge", year: 6, category: "School", hint: "Facts and wisdom gained through learning.", emoji: "🧠", distractors: ["knowlege", "knolledge", "knowlegde"] },
+      { word: "necessary", year: 6, category: "General", hint: "Required or essential to be done.", emoji: "📌", distractors: ["neccessary", "necesary", "necessery"] },
+      { word: "temperature", year: 6, category: "Nature", hint: "A measurement of heat or coldness in the air.", emoji: "🌡️", distractors: ["temprature", "tempreture", "temperachur"] },
+      { word: "information", year: 6, category: "School", hint: "Facts provided or learned about something.", emoji: "ℹ️", distractors: ["informacion", "informashun", "informasion"] },
+      { word: "education", year: 6, category: "School", hint: "The process of receiving systematic instruction.", emoji: "🎓", distractors: ["educacion", "educashun", "educasion"] },
+      { word: "responsibility", year: 6, category: "General", hint: "The state of being accountable for duties.", emoji: "🤝", distractors: ["responsability", "responsibilaty", "responcibility"] },
+      { word: "communication", year: 6, category: "General", hint: "Exchanging information by speaking or writing.", emoji: "📡", distractors: ["comunication", "communicasion", "communicashun"] },
+      { word: "competition", year: 6, category: "General", hint: "An event or contest where people strive to win.", emoji: "🏁", distractors: ["conpetition", "competision", "competetion"] },
+      { word: "technology", year: 6, category: "General", hint: "Scientific devices and machinery used to solve problems.", emoji: "🤖", distractors: ["tecnology", "technolegy", "technolagy"] },
+      { word: "community", year: 6, category: "General", hint: "A group of people living or working together.", emoji: "🏘️", distractors: ["comunity", "communitie", "comunitie"] },
+      { word: "civilization", year: 6, category: "General", hint: "An advanced stage of social and cultural development.", emoji: "🏛️", distractors: ["civilisation", "civilazation", "civilsation"] },
+      { word: "extraordinary", year: 6, category: "General", hint: "Very unusual, marvelous, and remarkable.", emoji: "🌟", distractors: ["extroidinary", "extraordinery", "extraordenary"] }
+    ];
+
+    /* =========================================================================
+     * PURE SYNTHESIZED AUDIO ENGINE (Web Audio API & SpeechSynthesis)
+     * 100% offline, zero external audio asset files needed.
+     * ========================================================================= */
+    let isSoundMuted = false;
+    let selectedAccent = "UK"; // UK by default as requested (en-GB or en-US)
+    let audioCtx = null;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) audioCtx = new AudioContextClass();
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type, duration, delay = 0, gainLevel = 0.2) {
+      if (isSoundMuted) return;
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      try {
+        const now = ctx.currentTime + delay;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(gainLevel, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration + 0.02);
+      } catch (e) {}
+    }
+
+    const SoundFX = {
+      click: () => playTone(600, "sine", 0.06, 0, 0.1),
+      correct: () => {
+        playTone(523.25, "sine", 0.15, 0, 0.2);     // C5
+        playTone(659.25, "sine", 0.15, 0.08, 0.2);  // E5
+        playTone(783.99, "sine", 0.15, 0.16, 0.2);  // G5
+        playTone(1046.5, "sine", 0.35, 0.24, 0.22); // C6
+      },
+      wrong: () => {
+        playTone(320, "triangle", 0.18, 0, 0.2);
+        playTone(220, "triangle", 0.25, 0.12, 0.2);
+      },
+      fanfare: () => {
+        [523.25, 523.25, 523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
+          playTone(f, "triangle", 0.22, idx * 0.14, 0.2);
+        });
+      }
+    };
+
+    // Pronounce English word using SpeechSynthesis with fallback
+    function speakWord(word) {
+      if (isSoundMuted) return Promise.resolve();
+      if (!('speechSynthesis' in window)) return Promise.resolve();
+
+      return new Promise(resolve => {
+        try {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(word);
+          const targetLang = selectedAccent === "UK" ? "en-GB" : "en-US";
+          utterance.lang = targetLang;
+          utterance.rate = 0.88;
+          utterance.pitch = 1.05;
+
+          const voices = window.speechSynthesis.getVoices();
+          if (voices && voices.length > 0) {
+            // Find English voice matching accent, or fallback to any English voice
+            let match = voices.find(v => v.lang.toLowerCase().startsWith(targetLang.toLowerCase()))
+              || voices.find(v => v.lang.toLowerCase().startsWith("en-gb"))
+              || voices.find(v => v.lang.toLowerCase().startsWith("en-us"))
+              || voices.find(v => v.lang.toLowerCase().startsWith("en"));
+            if (match) utterance.voice = match;
+          }
+
+          utterance.onend = () => resolve();
+          utterance.onerror = () => resolve();
+          setTimeout(resolve, 2500); // Safety timeout
+          window.speechSynthesis.speak(utterance);
+        } catch (e) {
+          resolve();
+        }
+      });
+    }
+
+    /* =========================================================================
+     * PURE CANVAS CONFETTI (Zero external library required)
+     * ========================================================================= */
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    let confettiParticles = [];
+    let confettiAnimationId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti() {
+      confettiParticles = [];
+      const colors = ["#f59e0b", "#10b981", "#3b82f6", "#ec4899", "#8b5cf6", "#ef4444"];
+      for (let i = 0; i < 90; i++) {
+        confettiParticles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2 + 50,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 12,
+          life: 1
+        });
+      }
+
+      if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId);
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      confettiParticles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.25; // gravity
+        p.rotation += p.vRot;
+        p.life -= 0.012;
+
+        if (p.life > 0) {
+          alive = true;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        }
+      });
+      if (alive) {
+        confettiAnimationId = requestAnimationFrame(animateConfetti);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    /* =========================================================================
+     * PERSISTENT STATS IN LOCALSTORAGE
+     * ========================================================================= */
+    const STATS_KEY = "esc_stats_v1";
+    function loadStats() {
+      try {
+        const raw = localStorage.getItem(STATS_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return { gamesPlayed: 0, wordsCorrect: 0, bestScore: 0, bestStreak: 0, practiceWords: [] };
+    }
+
+    function saveStats(stats) {
+      try {
+        localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+      } catch (e) {}
+    }
+
+    function recordWordMistake(word) {
+      const stats = loadStats();
+      if (!stats.practiceWords.includes(word)) {
+        stats.practiceWords.unshift(word);
+        if (stats.practiceWords.length > 25) stats.practiceWords.pop();
+        saveStats(stats);
+      }
+    }
+
+    function removeWordMistake(word) {
+      const stats = loadStats();
+      stats.practiceWords = stats.practiceWords.filter(w => w.toLowerCase() !== word.toLowerCase());
+      saveStats(stats);
+    }
+
+    /* =========================================================================
+     * APPLICATION STATE
+     * ========================================================================= */
+    let currentYear = 1;
+    let currentDifficulty = "EASY"; // "EASY" | "MEDIUM" | "HARD"
+    let sessionWords = [];
+    let currentQIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+    let currentStreak = 0;
+    let bestStreakInSession = 0;
+    let lives = 3;
+    let unlimitedLives = false;
+    let hintUsed = false;
+    let isAnswered = false;
+
+    // Medium state
+    let mediumPlaced = [];
+    let mediumBank = [];
+
+    // Hard state
+    let hardTyped = "";
+    let hardRevealedIndices = [];
+
+    // Practice mode state
+    let practiceIndex = 0;
+
+    /* =========================================================================
+     * SCREEN NAVIGATION
+     * ========================================================================= */
+    function showView(viewId) {
+      document.querySelectorAll(".view-section").forEach(v => v.classList.remove("active"));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add("active");
+      window.scrollTo(0, 0);
+    }
+
+    /* =========================================================================
+     * STARTING A NEW GAME
+     * ========================================================================= */
+    function startNewGame() {
+      // Filter words by selected year
+      let pool = WORD_BANK.filter(w => w.year === currentYear);
+      if (pool.length < 10) pool = WORD_BANK;
+
+      // Randomize questions without duplicates in session
+      const shuffled = [...pool];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      sessionWords = shuffled.slice(0, 10);
+
+      currentQIndex = 0;
+      score = 0;
+      correctCount = 0;
+      currentStreak = 0;
+      bestStreakInSession = 0;
+      lives = 3;
+      unlimitedLives = false;
+
+      // Update UI badges
+      document.getElementById("gameYearPill").textContent = "Year " + currentYear;
+      document.getElementById("gameLevelPill").textContent = currentDifficulty;
+
+      showView("gameView");
+      loadQuestion();
+    }
+
+    /* =========================================================================
+     * QUESTION LOADER
+     * ========================================================================= */
+    function loadQuestion() {
+      const q = sessionWords[currentQIndex];
+      isAnswered = false;
+      hintUsed = false;
+
+      // Update progress indicators
+      document.getElementById("qCurrentNum").textContent = currentQIndex + 1;
+      document.getElementById("gameScoreDisplay").textContent = score;
+      document.getElementById("streakIndicator").textContent = "🔥 Streak: " + currentStreak;
+      document.getElementById("gameCategoryDisplay").textContent = "Category: " + q.category;
+      document.getElementById("cardCategoryPill").textContent = q.category;
+      document.getElementById("gameProgressFill").style.width = ((currentQIndex + 1) / 10 * 100) + "%";
+
+      updateLivesDisplay();
+
+      // Reset feedback and hint
+      const feedback = document.getElementById("feedbackBanner");
+      feedback.style.display = "none";
+      feedback.className = "feedback-banner";
+
+      const hintBox = document.getElementById("hintBox");
+      hintBox.style.display = "none";
+      document.getElementById("hintBtn").style.display = "inline-block";
+      document.getElementById("nextQuestionBtn").style.display = "none";
+
+      // Picture / Mystery Box
+      const emojiEl = document.getElementById("questionEmoji");
+      if (currentDifficulty === "HARD") {
+        emojiEl.textContent = "🎧"; // Mystery audio indicator
+      } else {
+        emojiEl.textContent = q.emoji;
+      }
+
+      // Hide all sub-containers
+      document.getElementById("easyContainer").style.display = "none";
+      document.getElementById("mediumContainer").style.display = "none";
+      document.getElementById("hardContainer").style.display = "none";
+
+      // Render mode specific inputs
+      if (currentDifficulty === "EASY") {
+        renderEasyMode(q);
+      } else if (currentDifficulty === "MEDIUM") {
+        renderMediumMode(q);
+      } else if (currentDifficulty === "HARD") {
+        renderHardMode(q);
+      }
+
+      // Auto-pronounce once on load
+      setTimeout(() => {
+        speakWord(q.word);
+      }, 300);
+    }
+
+    function updateLivesDisplay() {
+      if (unlimitedLives) {
+        document.getElementById("gameLivesDisplay").innerHTML = "❤️ <span style='font-size:12px;'>UNLIMITED</span>";
+        return;
+      }
+      let html = "";
+      for (let i = 0; i < 3; i++) {
+        html += (i < lives) ? "❤️ " : "🤍 ";
+      }
+      document.getElementById("gameLivesDisplay").innerHTML = html.trim();
+    }
+
+    /* =========================================================================
+     * EASY MODE LOGIC
+     * ========================================================================= */
+    function renderEasyMode(q) {
+      const container = document.getElementById("easyContainer");
+      container.style.display = "grid";
+
+      // Shuffle 1 correct + 3 distractors
+      const choices = [q.word.toUpperCase(), ...q.distractors.map(d => d.toUpperCase())];
+      for (let i = choices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
+
+      const buttons = container.querySelectorAll(".option-btn");
+      buttons.forEach((btn, idx) => {
+        btn.className = "btn-tactile option-btn";
+        btn.disabled = false;
+        btn.querySelector(".option-text").textContent = choices[idx];
+
+        btn.onclick = () => {
+          if (isAnswered) return;
+          const chosen = choices[idx];
+          if (chosen.toLowerCase() === q.word.toLowerCase()) {
+            btn.classList.add("correct");
+            handleCorrect();
+          } else {
+            btn.classList.add("wrong");
+            btn.disabled = true;
+            handleWrong();
+          }
+        };
+      });
+    }
+
+    /* =========================================================================
+     * MEDIUM MODE LOGIC (Scrambled Letters)
+     * ========================================================================= */
+    function renderMediumMode(q) {
+      const container = document.getElementById("mediumContainer");
+      container.style.display = "block";
+
+      const targetLetters = q.word.toUpperCase().split("");
+      mediumPlaced = [];
+
+      // Scramble letters
+      let scrambled = targetLetters.map((char, index) => ({ id: char + "_" + index, char }));
+      for (let i = scrambled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [scrambled[i], scrambled[j]] = [scrambled[j], scrambled[i]];
+      }
+      mediumBank = scrambled;
+
+      updateMediumUI();
+    }
+
+    function updateMediumUI() {
+      const q = sessionWords[currentQIndex];
+      const targetLength = q.word.length;
+
+      // Render slots
+      const slotsContainer = document.getElementById("mediumSlots");
+      slotsContainer.innerHTML = "";
+      for (let i = 0; i < targetLength; i++) {
+        const item = mediumPlaced[i];
+        const slot = document.createElement("div");
+        slot.className = "letter-slot " + (item ? "filled btn-tactile-sm" : "empty");
+        slot.textContent = item ? item.char : "";
+        if (item && !isAnswered) {
+          slot.onclick = () => {
+            SoundFX.click();
+            mediumPlaced.splice(i, 1);
+            mediumBank.push(item);
+            updateMediumUI();
+          };
+        }
+        slotsContainer.appendChild(slot);
+      }
+
+      // Render bank
+      const bankContainer = document.getElementById("mediumBank");
+      bankContainer.innerHTML = "";
+      mediumBank.forEach((item, index) => {
+        const tile = document.createElement("button");
+        tile.className = "bank-tile btn-tactile";
+        tile.textContent = item.char;
+        tile.disabled = isAnswered;
+        tile.onclick = () => {
+          if (isAnswered) return;
+          SoundFX.click();
+          mediumBank.splice(index, 1);
+          mediumPlaced.push(item);
+          updateMediumUI();
+
+          // Check if full
+          if (mediumPlaced.length === targetLength) {
+            const spelled = mediumPlaced.map(t => t.char).join("");
+            if (spelled.toLowerCase() === q.word.toLowerCase()) {
+              handleCorrect();
+            } else {
+              handleWrong();
+              // Shake slots
+              slotsContainer.classList.add("animate-shake");
+              setTimeout(() => slotsContainer.classList.remove("animate-shake"), 500);
+            }
+          }
+        };
+        bankContainer.appendChild(tile);
+      });
+    }
+
+    document.getElementById("mediumUndoBtn").onclick = () => {
+      if (isAnswered || mediumPlaced.length === 0) return;
+      SoundFX.click();
+      const last = mediumPlaced.pop();
+      mediumBank.push(last);
+      updateMediumUI();
+    };
+
+    document.getElementById("mediumClearBtn").onclick = () => {
+      if (isAnswered || mediumPlaced.length === 0) return;
+      SoundFX.click();
+      renderMediumMode(sessionWords[currentQIndex]);
+    };
+
+    /* =========================================================================
+     * HARD MODE LOGIC (Audio & Typing)
+     * ========================================================================= */
+    function renderHardMode(q) {
+      const container = document.getElementById("hardContainer");
+      container.style.display = "block";
+      hardTyped = "";
+      hardRevealedIndices = [];
+      updateHardBoxes();
+    }
+
+    function updateHardBoxes() {
+      const q = sessionWords[currentQIndex];
+      const targetLength = q.word.length;
+      const boxesContainer = document.getElementById("hardBoxes");
+      boxesContainer.innerHTML = "";
+
+      for (let i = 0; i < targetLength; i++) {
+        const box = document.createElement("div");
+        box.className = "hard-box";
+        const char = hardTyped[i];
+        if (char) {
+          box.textContent = char;
+          box.classList.add(hardRevealedIndices.includes(i) ? "hinted" : "filled");
+        }
+        boxesContainer.appendChild(box);
+      }
+    }
+
+    // Keyboard handlers
+    document.querySelectorAll(".virtual-keyboard .kb-key[data-key]").forEach(keyBtn => {
+      keyBtn.onclick = () => {
+        if (isAnswered) return;
+        const key = keyBtn.getAttribute("data-key");
+        const q = sessionWords[currentQIndex];
+        if (hardTyped.length < q.word.length) {
+          SoundFX.click();
+          hardTyped += key;
+          updateHardBoxes();
+        }
+      };
+    });
+
+    document.getElementById("kbBackBtn").onclick = () => {
+      if (isAnswered || hardTyped.length === 0) return;
+      SoundFX.click();
+      hardTyped = hardTyped.slice(0, -1);
+      updateHardBoxes();
+    };
+
+    document.getElementById("kbClearBtn").onclick = () => {
+      if (isAnswered || hardTyped.length === 0) return;
+      SoundFX.click();
+      hardTyped = "";
+      updateHardBoxes();
+    };
+
+    document.getElementById("kbCheckBtn").onclick = () => {
+      if (isAnswered || hardTyped.length === 0) return;
+      const q = sessionWords[currentQIndex];
+      if (hardTyped.toLowerCase() === q.word.toLowerCase()) {
+        document.getElementById("questionEmoji").textContent = q.emoji; // Reveal emoji!
+        handleCorrect();
+      } else {
+        handleWrong();
+        const boxes = document.getElementById("hardBoxes");
+        boxes.classList.add("animate-shake");
+        setTimeout(() => boxes.classList.remove("animate-shake"), 500);
+      }
+    };
+
+    // Physical keyboard listener
+    window.addEventListener("keydown", (e) => {
+      if (currentDifficulty !== "HARD" || isAnswered || !document.getElementById("gameView").classList.contains("active")) return;
+      const q = sessionWords[currentQIndex];
+      if (!q) return;
+
+      if (/^[a-zA-Z]$/.test(e.key)) {
+        if (hardTyped.length < q.word.length) {
+          SoundFX.click();
+          hardTyped += e.key.toUpperCase();
+          updateHardBoxes();
+        }
+      } else if (e.key === "Backspace") {
+        if (hardTyped.length > 0) {
+          SoundFX.click();
+          hardTyped = hardTyped.slice(0, -1);
+          updateHardBoxes();
+        }
+      } else if (e.key === "Enter") {
+        document.getElementById("kbCheckBtn").click();
+      }
+    });
+
+    /* =========================================================================
+     * ANSWER FEEDBACK & SCORING
+     * ========================================================================= */
+    function handleCorrect() {
+      isAnswered = true;
+      SoundFX.correct();
+
+      // Remove from mistakes if previously missed
+      removeWordMistake(sessionWords[currentQIndex].word);
+
+      score += 10;
+      correctCount++;
+      currentStreak++;
+      if (currentStreak > bestStreakInSession) {
+        bestStreakInSession = currentStreak;
+      }
+
+      document.getElementById("gameScoreDisplay").textContent = score;
+      document.getElementById("streakIndicator").textContent = "🔥 Streak: " + currentStreak;
+
+      const feedback = document.getElementById("feedbackBanner");
+      feedback.style.display = "flex";
+      feedback.className = "feedback-banner correct animate-shake";
+      document.getElementById("feedbackText").textContent = "Correct! 🎉 +10 Points";
+
+      document.getElementById("nextQuestionBtn").style.display = "block";
+    }
+
+    function handleWrong() {
+      SoundFX.wrong();
+      currentStreak = 0;
+      document.getElementById("streakIndicator").textContent = "🔥 Streak: 0";
+
+      // Save mistake for My Progress
+      recordWordMistake(sessionWords[currentQIndex].word);
+
+      // Decrement lives
+      if (!unlimitedLives) {
+        lives--;
+        updateLivesDisplay();
+        if (lives <= 0) {
+          document.getElementById("outOfLivesModal").classList.add("active");
+          return;
+        }
+      }
+
+      const feedback = document.getElementById("feedbackBanner");
+      feedback.style.display = "flex";
+      feedback.className = "feedback-banner wrong animate-shake";
+      document.getElementById("feedbackText").textContent = "Try Again! 🤔 Listen carefully";
+    }
+
+    // Hint button click
+    document.getElementById("hintBtn").onclick = () => {
+      if (hintUsed || isAnswered) return;
+      SoundFX.click();
+      hintUsed = true;
+      document.getElementById("hintBtn").style.display = "none";
+
+      const q = sessionWords[currentQIndex];
+      let msg = q.hint;
+
+      if (currentDifficulty === "MEDIUM") {
+        msg += " (Starts with: " + q.word[0].toUpperCase() + ")";
+      } else if (currentDifficulty === "HARD") {
+        msg += " (First letter revealed: " + q.word[0].toUpperCase() + ")";
+        if (!hardTyped) {
+          hardTyped = q.word[0].toUpperCase();
+          hardRevealedIndices = [0];
+          updateHardBoxes();
+        }
+      }
+
+      document.getElementById("hintText").textContent = msg;
+      document.getElementById("hintBox").style.display = "block";
+    };
+
+    // Next question transition
+    document.getElementById("nextQuestionBtn").onclick = () => {
+      SoundFX.click();
+      if (currentQIndex + 1 < sessionWords.length) {
+        currentQIndex++;
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    };
+
+    /* =========================================================================
+     * RESULT SCREEN
+     * ========================================================================= */
+    function showResults() {
+      SoundFX.fanfare();
+      launchConfetti();
+
+      document.getElementById("resultScore").textContent = score;
+      document.getElementById("resultCorrectCount").textContent = correctCount;
+      document.getElementById("resultStreak").textContent = "🔥 " + bestStreakInSession;
+
+      // Rating: 90–100 = ⭐⭐⭐, 70–89 = ⭐⭐, Below 70 = ⭐
+      let stars = "⭐";
+      if (score >= 90) stars = "⭐⭐⭐";
+      else if (score >= 70) stars = "⭐⭐";
+      document.getElementById("resultStars").textContent = stars;
+
+      // Session word list
+      const listContainer = document.getElementById("resultWordsList");
+      listContainer.innerHTML = "";
+      sessionWords.forEach(w => {
+        const item = document.createElement("div");
+        item.style.cssText = "display:flex; align-items:center; justify-content:space-between; padding:6px 10px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0; font-size:13px; font-weight:800;";
+        item.innerHTML = `<span>${w.emoji} ${w.word.toUpperCase()}</span>`;
+        const speakBtn = document.createElement("button");
+        speakBtn.className = "btn-tactile-sm";
+        speakBtn.style.cssText = "background:#fbbf24; color:#78350f; border-radius:8px; padding:3px 8px; font-size:12px;";
+        speakBtn.textContent = "🔊";
+        speakBtn.onclick = () => speakWord(w.word);
+        item.appendChild(speakBtn);
+        listContainer.appendChild(item);
+      });
+
+      // Update persistent stats
+      const stats = loadStats();
+      stats.gamesPlayed++;
+      stats.wordsCorrect += correctCount;
+      stats.bestScore = Math.max(stats.bestScore, score);
+      stats.bestStreak = Math.max(stats.bestStreak, bestStreakInSession);
+      saveStats(stats);
+
+      showView("resultView");
+    }
+
+    /* =========================================================================
+     * PRACTICE MODE
+     * ========================================================================= */
+    function loadPracticeWord() {
+      const q = WORD_BANK[practiceIndex];
+      document.getElementById("practiceEmoji").textContent = q.emoji;
+      document.getElementById("practiceWord").textContent = q.word.toUpperCase();
+      document.getElementById("practiceYearPill").textContent = "Year " + q.year + " • " + q.category;
+      document.getElementById("practiceHint").textContent = '"' + q.hint + '"';
+      speakWord(q.word);
+    }
+
+    document.getElementById("practiceNextBtn").onclick = () => {
+      SoundFX.click();
+      practiceIndex = (practiceIndex + 1) % WORD_BANK.length;
+      loadPracticeWord();
+    };
+
+    document.getElementById("practicePrevBtn").onclick = () => {
+      SoundFX.click();
+      practiceIndex = (practiceIndex - 1 + WORD_BANK.length) % WORD_BANK.length;
+      loadPracticeWord();
+    };
+
+    document.getElementById("practiceAudioBtn").onclick = () => {
+      SoundFX.click();
+      speakWord(WORD_BANK[practiceIndex].word);
+    };
+
+    /* =========================================================================
+     * MY PROGRESS SCREEN
+     * ========================================================================= */
+    function showProgressScreen() {
+      const stats = loadStats();
+      document.getElementById("statGamesPlayed").textContent = stats.gamesPlayed;
+      document.getElementById("statWordsCorrect").textContent = stats.wordsCorrect;
+      document.getElementById("statBestScore").textContent = stats.bestScore;
+      document.getElementById("statBestStreak").textContent = stats.bestStreak;
+
+      const listContainer = document.getElementById("practiceItemsList");
+      listContainer.innerHTML = "";
+
+      if (stats.practiceWords.length === 0) {
+        listContainer.innerHTML = "<div style='font-size:12px; color:#64748b; padding:10px 0;'>No words to practice yet! Play games and any missed words will appear here.</div>";
+      } else {
+        stats.practiceWords.forEach(wordStr => {
+          const wObj = WORD_BANK.find(w => w.word.toLowerCase() === wordStr.toLowerCase()) || { emoji: "📝", word: wordStr };
+          const row = document.createElement("div");
+          row.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:6px 10px; border-radius:10px; border:1px solid #e2e8f0; font-size:13px; font-weight:800;";
+          row.innerHTML = `<span>${wObj.emoji} ${wordStr.toUpperCase()}</span>`;
+          const spkBtn = document.createElement("button");
+          spkBtn.className = "btn-tactile-sm";
+          spkBtn.style.cssText = "background:#fbbf24; color:#78350f; border-radius:8px; padding:3px 8px; font-size:12px;";
+          spkBtn.textContent = "🔊 Listen";
+          spkBtn.onclick = () => speakWord(wordStr);
+          row.appendChild(spkBtn);
+          listContainer.appendChild(row);
+        });
+      }
+
+      showView("progressView");
+    }
+
+    /* =========================================================================
+     * EVENT BINDINGS & CONTROLS
+     * ========================================================================= */
+    // Top Accent Switcher
+    document.getElementById("accentToggleBtn").onclick = () => {
+      SoundFX.click();
+      selectedAccent = (selectedAccent === "UK") ? "US" : "UK";
+      document.getElementById("accentFlag").textContent = (selectedAccent === "UK") ? "🇬🇧 UK" : "🇺🇸 US";
+    };
+
+    // Sound ON / OFF
+    document.getElementById("soundToggleBtn").onclick = () => {
+      isSoundMuted = !isSoundMuted;
+      document.getElementById("soundIcon").textContent = isSoundMuted ? "🔇 Muted" : "🔊 Sound ON";
+      const btn = document.getElementById("soundToggleBtn");
+      btn.style.background = isSoundMuted ? "#fee2e2" : "#dcfce7";
+      btn.style.color = isSoundMuted ? "#991b1b" : "#15803d";
+    };
+
+    // Pronunciation button in Game
+    document.getElementById("listenAudioBtn").onclick = () => {
+      const btn = document.getElementById("listenAudioBtn");
+      btn.classList.add("speaking");
+      speakWord(sessionWords[currentQIndex].word).then(() => {
+        btn.classList.remove("speaking");
+      });
+    };
+
+    // Main Navigation
+    document.getElementById("startGameBtn").onclick = () => {
+      SoundFX.click();
+      startNewGame();
+    };
+
+    document.getElementById("selectLevelBtn").onclick = () => {
+      SoundFX.click();
+      showView("levelSelectView");
+    };
+
+    document.getElementById("levelBackBtn").onclick = () => {
+      SoundFX.click();
+      showView("homeView");
+    };
+
+    document.getElementById("levelStartBtn").onclick = () => {
+      SoundFX.click();
+      startNewGame();
+    };
+
+    document.getElementById("brandBtn").onclick = () => {
+      SoundFX.click();
+      showView("homeView");
+    };
+
+    document.getElementById("homeProgressBtn").onclick = showProgressScreen;
+    document.getElementById("progressBackBtn").onclick = () => {
+      SoundFX.click();
+      showView("homeView");
+    };
+
+    document.getElementById("homePracticeBtn").onclick = () => {
+      SoundFX.click();
+      practiceIndex = 0;
+      loadPracticeWord();
+      showView("practiceView");
+    };
+
+    document.getElementById("practiceBackBtn").onclick = () => {
+      SoundFX.click();
+      showView("homeView");
+    };
+
+    document.getElementById("playAgainBtn").onclick = () => {
+      SoundFX.click();
+      startNewGame();
+    };
+
+    document.getElementById("changeLevelBtn").onclick = () => {
+      SoundFX.click();
+      showView("levelSelectView");
+    };
+
+    document.getElementById("resultHomeBtn").onclick = () => {
+      SoundFX.click();
+      showView("homeView");
+    };
+
+    // Year selection buttons in Level Select
+    document.querySelectorAll(".year-select-btn").forEach(btn => {
+      btn.onclick = () => {
+        SoundFX.click();
+        document.querySelectorAll(".year-select-btn").forEach(b => {
+          b.style.background = "#f1f5f9";
+          b.style.color = "#334155";
+          b.style.borderColor = "#e2e8f0";
+        });
+        btn.style.background = "#dbeafe";
+        btn.style.color = "#1e40af";
+        btn.style.borderColor = "#93c5fd";
+
+        currentYear = parseInt(btn.getAttribute("data-year"), 10);
+        document.getElementById("homeYearBadge").textContent = "📘 Year " + currentYear;
+      };
+    });
+
+    // Difficulty selection buttons in Level Select
+    document.querySelectorAll(".diff-select-btn").forEach(btn => {
+      btn.onclick = () => {
+        SoundFX.click();
+        document.querySelectorAll(".diff-select-btn").forEach(b => {
+          b.style.background = "#f1f5f9";
+          b.style.color = "#334155";
+          b.style.borderColor = "#e2e8f0";
+          b.querySelector("span").style.display = "none";
+        });
+
+        currentDifficulty = btn.getAttribute("data-diff");
+        btn.querySelector("span").style.display = "inline";
+
+        if (currentDifficulty === "EASY") {
+          btn.style.background = "#dcfce7";
+          btn.style.color = "#15803d";
+          btn.style.borderColor = "#86efac";
+          document.getElementById("homeLevelBadge").textContent = "🟢 EASY";
+          document.getElementById("homeLevelBadge").className = "pill pill-emerald";
+        } else if (currentDifficulty === "MEDIUM") {
+          btn.style.background = "#fef3c7";
+          btn.style.color = "#b45309";
+          btn.style.borderColor = "#fde68a";
+          document.getElementById("homeLevelBadge").textContent = "🟡 MEDIUM";
+          document.getElementById("homeLevelBadge").className = "pill pill-amber";
+        } else if (currentDifficulty === "HARD") {
+          btn.style.background = "#ffe4e6";
+          btn.style.color = "#9f1239";
+          btn.style.borderColor = "#fecdd3";
+          document.getElementById("homeLevelBadge").textContent = "🔴 HARD";
+          document.getElementById("homeLevelBadge").className = "pill pill-rose";
+        }
+      };
+    });
+
+    // How to Play modal controls
+    const modal = document.getElementById("howToPlayModal");
+    document.getElementById("howToPlayBtn").onclick = () => {
+      SoundFX.click();
+      modal.classList.add("active");
+    };
+    document.getElementById("homeHowToPlayBtn").onclick = () => {
+      SoundFX.click();
+      modal.classList.add("active");
+    };
+    document.getElementById("closeHowToPlayBtn").onclick = () => {
+      SoundFX.click();
+      modal.classList.remove("active");
+    };
+    document.getElementById("howToPlayGotItBtn").onclick = () => {
+      SoundFX.click();
+      modal.classList.remove("active");
+    };
+
+    // Out of Lives modal controls
+    document.getElementById("outTryAgainBtn").onclick = () => {
+      SoundFX.click();
+      document.getElementById("outOfLivesModal").classList.remove("active");
+      startNewGame();
+    };
+    document.getElementById("outContinueBtn").onclick = () => {
+      SoundFX.click();
+      unlimitedLives = true;
+      lives = 1;
+      updateLivesDisplay();
+      document.getElementById("outOfLivesModal").classList.remove("active");
+    };
+    document.getElementById("outHomeBtn").onclick = () => {
+      SoundFX.click();
+      document.getElementById("outOfLivesModal").classList.remove("active");
+      showView("homeView");
+    };
+  </script>
+</body>
+</html>
